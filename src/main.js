@@ -41,7 +41,7 @@ const { positionals, values } = parseArgs({
 })
 
 {
-	const usageText = `Usage: repos [sync-repositories|symlink-hidden-dirs|check-license-headers] --help`
+	const usageText = `Usage: repos [all|sync-repositories|symlink-hidden-dirs|check-license-headers] --help`
 
 	if (values.help) {
 		console.log(usageText)
@@ -56,16 +56,21 @@ const { positionals, values } = parseArgs({
 }
 
 {
-	// github_pat_* will not work...
 	const octokit = new Octokit({
 		auth: process.env.GITHUB_AUTH_TOKEN,
 	})
+
 	/** @type {Config} */
 	const config = jsoncParser.parse(await fs.readFile('config.jsonc', 'utf-8'))
 	config.organizationsDir = untildify(config.organizationsDir)
+	config.hiddenDirsRepositoryDir = untildify(config.hiddenDirsRepositoryDir)
 	config.ignoredOrganizations = config.ignoredOrganizations || []
 
-	if (positionals[0] === 'sync-repositories') {
+	if (positionals[0] === 'all') {
+		await syncRepositories({ octokit, config })
+		await symlinkHiddenDirs({ octokit, config })
+		await checkLicenseHeaders({ octokit, config })
+	} else if (positionals[0] === 'sync-repositories') {
 		await syncRepositories({ octokit, config })
 	} else if (positionals[0] === 'symlink-hidden-dirs') {
 		await symlinkHiddenDirs({ octokit, config })

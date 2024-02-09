@@ -13,6 +13,7 @@ import * as jsoncParser from 'jsonc-parser'
 import untildify from 'untildify'
 import yn from 'yn'
 import { parseArgs } from 'node:util'
+import { forEachRepository } from './util.js'
 
 /**
  * @typedef {import('@octokit/rest').Octokit} Octokit
@@ -27,27 +28,11 @@ import { parseArgs } from 'node:util'
  * @param {FunctionOptions} options
  */
 export async function symlinkHiddenDirs({ octokit, config }) {
-	for (const orgEntry of await fs.readdir(config.organizationsDir, {
-		withFileTypes: true,
-	})) {
-		const orgDir = path.join(orgEntry.path, orgEntry.name)
-		if (!orgEntry.isDirectory()) {
-			continue
-		}
-
-		for (const repoEntry of await fs.readdir(orgDir, {
-			withFileTypes: true,
-		})) {
-			const repoDir = path.join(repoEntry.path, repoEntry.name)
-			if (!repoEntry.isDirectory()) {
-				continue
-			}
-
+	await forEachRepository(
+		config.organizationsDir,
+		async function run({ orgDir, orgEntry, repoDir, repoEntry }) {
 			const oldHiddenDir = path.join(repoDir, '.hidden')
-			const newHiddenDir = path.join(
-				untildify(config.hiddenDirsRepositoryDir),
-				repoEntry.name,
-			)
+			const newHiddenDir = path.join(config.hiddenDirsRepositoryDir, repoEntry.name)
 			const newHiddenDirPretty = path.join(
 				path.basename(path.dirname(newHiddenDir)),
 				path.basename(newHiddenDir),
@@ -116,6 +101,6 @@ export async function symlinkHiddenDirs({ octokit, config }) {
 			if (newHiddenDirStat) {
 				await fs.symlink(newHiddenDir, oldHiddenDir)
 			}
-		}
-	}
+		},
+	)
 }

@@ -12,8 +12,10 @@
 		"@octokit/rest": "^20.0.2",
 		"execa": "^8.0.1",
 		"globby": "^14.0.0",
+		"ignore-walk": "^6.0.4",
 		"jsonc-parser": "^3.2.1",
 		"micromatch": "^4.0.5",
+		"minimatch": "^9.0.3",
 		"untildify": "^5.0.0",
 		"yn": "^5.0.0"
 	},

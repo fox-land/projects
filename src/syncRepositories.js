@@ -41,7 +41,7 @@ export async function syncRepositories({ octokit, config }) {
 			}
 		}
 
-		const reposMap = await getOrgRepoMap(orgList, config.ignoredOrganizations)
+		const reposMap = await getOrgRepoMap(octokit, orgList, config.ignoredOrganizations)
 		for await (const { data: repositories } of octokit.paginate.iterator(
 			octokit.rest.repos.listForAuthenticatedUser,
 			{
@@ -151,17 +151,15 @@ export async function syncRepositories({ octokit, config }) {
 				}
 			}
 		}
-
-		// TODO: archived repositories on GitHub
-		// TODO: .hidden
 	}
 }
 
 /**
+ * @param {Octokit} octokit
  * @param {GetResponseDataTypeFromEndpointMethod<typeof octokit.orgs.listMembershipsForAuthenticatedUser>} allOrganizations
  * @param {string[]} ignoredOrganizations
  */
-async function getOrgRepoMap(allOrganizations, ignoredOrganizations = []) {
+async function getOrgRepoMap(octokit, allOrganizations, ignoredOrganizations = []) {
 	const filteredOrgs = allOrganizations
 		.map((item) => item.organization.login)
 		.filter((org) => !ignoredOrganizations.includes(org))
