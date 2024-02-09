@@ -1,5 +1,6 @@
 {
-	"name": "repos",
+	"name": "@hyperupcall/projects",
+	"private": false,
 	"version": "0.1.0",
 	"type": "module",
 	"description": "",
