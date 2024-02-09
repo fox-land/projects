@@ -1,0 +1,23 @@
+{
+	"name": "repos",
+	"version": "0.1.0",
+	"type": "module",
+	"description": "",
+	"author": "Edwin Kofler <edwin@kofler.dev> (https://edwinkofler.com/)",
+	"license": "MPL-2.0",
+	"packageManager": "pnpm@8.15.1",
+	"main": "index.js",
+	"keywords": [],
+	"dependencies": {
+		"@octokit/rest": "^20.0.2",
+		"execa": "^8.0.1",
+		"globby": "^14.0.0",
+		"jsonc-parser": "^3.2.1",
+		"micromatch": "^4.0.5",
+		"untildify": "^5.0.0",
+		"yn": "^5.0.0"
+	},
+	"devDependencies": {
+		"@octokit/types": "^12.4.0"
+	}
+}
